@@ -27,7 +27,7 @@ const useMovieTrailer = (id) => {
     }
 
     getMoivesVideoList(id);
-  }, []);
+  }, [dispatch, id]);
 };
 
 export default useMovieTrailer;
