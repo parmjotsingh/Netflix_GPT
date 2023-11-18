@@ -7,10 +7,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { addUser, removeUser } from "../utils/userSlice";
 import { auth } from "../utils/firebase";
+import { toggleGPTSearch } from "../utils/gPTSlice";
+import { SUPPORTED_LANG } from "../utils/constants";
+import { changeLanguage } from "../utils/configSlice";
 
 export default function Header() {
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
+  const showGPTSearch = useSelector((store) => store.gpt.showGPTSearch);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +31,10 @@ export default function Header() {
       }
     });
   }, []);
+
+  function handleGPTSearchClick() {
+    dispatch(toggleGPTSearch());
+  }
 
   function handleLogoutClick() {
     const auth = getAuth();
@@ -45,11 +53,36 @@ export default function Header() {
       {/* <div className="text-white text-center w-full font-semibold font-mono bg-black ">
         This is a educational/personal project. Only for learning purpose!
       </div> */}
-      <div className="absolute px-8 py-4 bg-gradient-to-b from-black w-full flex justify-between z-10 items-center">
+      <div className="absolute px-8 py-4 bg-gradient-to-b from-black w-full flex flex-col md:flex-row md:justify-between z-10 items-center">
         <img className="h-12 bg-stone-800" src={logo} alt="logo" />
         {user && (
-          <div className="flex items-center">
-            <p className="text-white font-medium pr-2 h-full">
+          <div className="flex items-center mt-1 md:mt-0">
+            {showGPTSearch && (
+              <select
+                onChange={(e) => {
+                  dispatch(changeLanguage(e.target.value));
+                }}
+                className="md:py-2 md:px-3 rounded-md font-semibold md:mr-3 text-white bg-transparent focus:outline-none"
+              >
+                {SUPPORTED_LANG.map((entry) => (
+                  <option
+                    key={entry.identifier}
+                    className="text-black font-medium py-2 px-3"
+                    value={entry.identifier}
+                  >
+                    {entry.name}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            <button
+              onClick={handleGPTSearchClick}
+              className="md:mr-2 text-white md:py-2 md:px-3 rounded-md font-semibold md:bg-gradient-to-r md:from-red-600 md:to-purple-600 md:hover:opacity-80 transition-all duration-300 ease-in-out "
+            >
+              {showGPTSearch ? "Homepage" : "GPT Search"}
+            </button>
+            <p className="hidden md:inline-block text-white font-medium pr-2 h-full">
               {user.displayName}
             </p>
             {/* <img className="h-6 w-8" src={facelogo} alt="faceLogo" /> */}
@@ -57,7 +90,7 @@ export default function Header() {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 34 34"
-              className="w-7 h-7 stroke-red-900 fill-red-900 mr-2"
+              className="hidden md:inline-block w-7 h-7 stroke-red-900 fill-red-900 mr-2"
             >
               <g>
                 <path

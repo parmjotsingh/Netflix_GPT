@@ -9,7 +9,11 @@ const MoviesList = ({ title, movies }) => {
       <div className="flex overflow-x-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
         <div className="flex ">
           {movies.map((movie) => (
-            <MovieCard key={movie.id} posterPath={movie.poster_path} />
+            <MovieCard
+              key={movie.id}
+              posterPath={movie.poster_path}
+              movieName={movie.title}
+            />
           ))}
         </div>
       </div>
